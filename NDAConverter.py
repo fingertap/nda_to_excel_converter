@@ -12,6 +12,7 @@ def reset_progress():
 
 def on_progress_complete():
     style.configure("TProgressbar", background="green", troughcolor="lightgrey")
+    tk.messagebox.showinfo("Process Complete", "The conversions have been completed successfully.")
 
 
 def run_script():
