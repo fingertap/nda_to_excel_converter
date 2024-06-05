@@ -16,7 +16,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x' # Replace with the Python version you need
+        python-version: '3.10' # Replace with the Python version you need
 
     - name: Install dependencies
       run: |
@@ -25,15 +25,13 @@ jobs:
 
     - name: Build the EXE
       run: |
-        pyinstaller --onefile gui.py
-        cp BTSDAExReport.exe dist/
+        pyinstaller --onefile --noconsole NDAConverter.py
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          dist/gui.exe
-          BTSDAExReport.exe
+          dist/NDAConverter.exe
         tag: ${{ github.ref }}
         name: Release ${{ github.ref }}
         body: |
