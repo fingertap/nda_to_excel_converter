@@ -71,7 +71,7 @@ tk.Button(
     root,
     text="Browse",
     command=lambda: runtime_entry.delete(0, tk.END)
-    or runtime_entry.insert(0, filedialog.askdirectory()),
+    or runtime_entry.insert(0, filedialog.askopenfilename()),
 ).grid(row=0, column=2)
 
 # Second row: input folder
