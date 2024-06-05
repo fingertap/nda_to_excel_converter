@@ -48,12 +48,13 @@ def run_script():
 
     for index, file in enumerate(input_folder.glob("*.nda*")):
         target_file = output_folder / f"{file.stem}.xlsx"
-        cmd = f'"{runtime}" export {output_format} "{file}" "{target_file}"'
-        try:
-            check_output(cmd, shell=True)
-        except Exception as e:
-            tk.messagebox.showerror("Error", f"Error converting {file}: {e}")
-            return
+        if not target_file.exists():
+            cmd = f'"{runtime}" export {output_format} "{file}" "{target_file}"'
+            try:
+                check_output(cmd, shell=True)
+            except Exception as e:
+                tk.messagebox.showerror("Error", f"Error converting {file}: {e}")
+                return
         progress_bar["value"] = index + 1
         root.update()
 
