@@ -85,13 +85,13 @@ root.title("Converter GUI for Neware NDA files")
 tk.Label(root, text="BTSDAExReport.exe path:").grid(row=0, column=0)
 runtime_entry = tk.Entry(root)
 runtime_entry.grid(row=0, column=1)
+
+filetypes = (("Executable files", "*.exe"), ("All files", "*.*"))
 tk.Button(
     root,
     text="Browse",
     command=lambda: runtime_entry.delete(0, tk.END)
-    or runtime_entry.insert(
-        0, filedialog.askopenfilename(filetypes=("Executable files", "*.exe"))
-    ),
+    or runtime_entry.insert(0, filedialog.askopenfilename(filetypes=filetypes)),
 ).grid(row=0, column=2)
 
 # Second row: input folder
