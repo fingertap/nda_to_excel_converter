@@ -52,8 +52,8 @@ def run_script():
 
     if recursive:
         input_files = []
-        for root, _, _ in os.walk(input_folder):
-            input_files += list(Path(root).glob("*.nda"))
+        for folder, _, _ in os.walk(input_folder):
+            input_files += list(Path(folder).glob("*.nda"))
     else:
         input_files = list(input_folder.glob("*.nda*"))
 
