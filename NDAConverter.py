@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 
 from pathlib import Path
@@ -12,7 +13,9 @@ def reset_progress():
 
 def on_progress_complete():
     style.configure("TProgressbar", background="green", troughcolor="lightgrey")
-    tk.messagebox.showinfo("Process Complete", "The conversions have been completed successfully.")
+    tk.messagebox.showinfo(
+        "Process Complete", "The conversions have been completed successfully."
+    )
 
 
 def run_script():
@@ -23,8 +26,12 @@ def run_script():
     output_folder = output_folder_entry.get()
     output_format = output_format_var.get()
 
+    recursive = bool(recursive_process.get())
+
     if not runtime_path:
-        tk.messagebox.showerror("Error", "Please select the location of BTSDAExReport.exe!")
+        tk.messagebox.showerror(
+            "Error", "Please select the location of BTSDAExReport.exe!"
+        )
         return
     runtime = Path(runtime_path)
     if not runtime.exists():
@@ -43,12 +50,21 @@ def run_script():
     if not output_folder.exists():
         output_folder.mkdir(parents=True)
 
+    if recursive:
+        input_files = []
+        for root, _, _ in os.walk(input_folder):
+            input_files += list(Path(root).glob("*.nda"))
+    else:
+        input_files = list(input_folder.glob("*.nda*"))
 
-    progress_bar["maximum"] = len(list(input_folder.glob("*.nda*")))
+    progress_bar["maximum"] = len(input_files)
 
-    for index, file in enumerate(input_folder.glob("*.nda*")):
-        target_file = output_folder / f"{file.stem}.xlsx"
+    for index, file in enumerate(input_files):
+        target_file = output_folder / file.relative_to(input_folder).with_suffix(
+            ".xlsx"
+        )
         if not target_file.exists():
+            target_file.parent.mkdir(exist_ok=True)
             cmd = f'"{runtime}" export {output_format} "{file}" "{target_file}"'
             try:
                 check_output(cmd, shell=True)
@@ -107,12 +123,19 @@ tk.OptionMenu(root, output_format_var, "General", "Layer", "Custom", "Sim").grid
 output_format_var.set("Custom")
 tk.Button(root, text="Convert!", command=run_script).grid(row=3, column=2)
 
+# Fifth row: checkbox
+recursive_process = tk.IntVar()
+tk.Checkbutton(
+    root, text="Recursively process sub-folders", variable=recursive_process
+).grid(row=4, column=0, columnspan=3)
+
 # Last row: progress bar
 style = ttk.Style()
-tk.Label(root, text="Progress:").grid(row=4, column=0)
+tk.Label(root, text="Progress:").grid(row=5, column=0)
 progress_bar = ttk.Progressbar(
     root, orient="horizontal", length=200, mode="determinate"
 )
-progress_bar.grid(row=4, columnspan=2, column=1)
+progress_bar.grid(row=5, columnspan=2, column=1)
+
 
 root.mainloop()
